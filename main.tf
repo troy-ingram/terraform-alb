@@ -66,37 +66,6 @@ resource "aws_subnet" "application-subnet-2" {
   }
 }
 
-# Create Database Private Subnet
-# resource "aws_subnet" "database-subnet-1" {
-#   vpc_id            = aws_vpc.my-vpc.id
-#   cidr_block        = "10.0.21.0/24"
-#   availability_zone = "us-east-1a"
-
-#   tags = {
-#     Name = "Database-1a"
-#   }
-# }
-
-# resource "aws_subnet" "database-subnet-2" {
-#   vpc_id            = aws_vpc.my-vpc.id
-#   cidr_block        = "10.0.22.0/24"
-#   availability_zone = "us-east-1b"
-
-#   tags = {
-#     Name = "Database-2b"
-#   }
-# }
-
-# resource "aws_subnet" "database-subnet" {
-#   vpc_id            = aws_vpc.my-vpc.id
-#   cidr_block        = "10.0.3.0/24"
-#   availability_zone = "us-east-1a"
-
-#   tags = {
-#     Name = "Database"
-#   }
-# }
-
 # Create Internet Gateway
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.my-vpc.id
@@ -213,32 +182,6 @@ resource "aws_security_group" "webserver-sg" {
   }
 }
 
-# Create Database Security Group
-# resource "aws_security_group" "database-sg" {
-#   name        = "Database-SG"
-#   description = "Allow inbound traffic from application layer"
-#   vpc_id      = aws_vpc.my-vpc.id
-
-#   ingress {
-#     description     = "Allow traffic from application layer"
-#     from_port       = 3306
-#     to_port         = 3306
-#     protocol        = "tcp"
-#     security_groups = [aws_security_group.webserver-sg.id]
-#   }
-
-#   egress {
-#     from_port   = 32768
-#     to_port     = 65535
-#     protocol    = "tcp"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
-
-#   tags = {
-#     Name = "Database-SG"
-#   }
-# }
-
 resource "aws_lb" "external-elb" {
   name               = "External-LB"
   internal           = false
@@ -284,29 +227,6 @@ resource "aws_lb_listener" "external-elb" {
     target_group_arn = aws_lb_target_group.external-elb.arn
   }
 }
-
-# resource "aws_db_instance" "default" {
-#   allocated_storage      = 10
-#   db_subnet_group_name   = aws_db_subnet_group.default.id
-#   engine                 = "mysql"
-#   engine_version         = "8.0.20"
-#   instance_class         = "db.t2.micro"
-#   multi_az               = true
-#   name                   = "mydb"
-#   username               = "username"
-#   password               = "password"
-#   skip_final_snapshot    = true
-#   vpc_security_group_ids = [aws_security_group.database-sg.id]
-# }
-
-# resource "aws_db_subnet_group" "default" {
-#   name       = "main"
-#   subnet_ids = [aws_subnet.database-subnet-1.id, aws_subnet.database-subnet-2.id]
-
-#   tags = {
-#     Name = "My DB subnet group"
-#   }
-# }
 
 output "lb_dns_name" {
   description = "The DNS name of the load balancer"
